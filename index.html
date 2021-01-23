@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
@@ -15,17 +17,114 @@
 			justify-content: center;
 			align-items: center;
 		}
-
+		.play-screen {
+			position: absolute;
+			width: 1200px;
+			height: 650px;
+			background-color: #fff;
+		}
 		#canvas {
+			position: absolute;
 			background-color: blue;
 			background: linear-gradient(to bottom, blue 0%, #77ddff 100%);
+		}
+		.before-play {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		.txt {
+			background-color: #fff;
+			width: 600px;
+			height: 400px;
+		}
+		.button {
+			padding: 0;
+			border: none;
+			font: inherit;
+			color: inherit;
+			background-color: transparent;
+			cursor: pointer;
+
+			width: 410px;
+			height: 150px;
+
+			background-image: url('./assets/start.png');
+			background-size: 100%;
+			background-repeat: no-repeat;
+
+
+		}
+		.loader {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background-image: url(./assets/loader.jpg);
+			background-size: 100%;
+		}
+		.loader__progress {
+			position: absolute;
+			top: 38%;
+			left: 32%;
+			height: 229px;
+		}
+		.loader__progress_empty {
+			position: absolute;
+			width: 470px;
+			background-image: url(./assets/empty.png);
+		}
+		.loader__progress_full {
+			position: absolute;
+			width: 0;
+			overflow: hidden;
+			background-image: url(./assets/full.png);
+			transition: width 2s 1s;
+		}
+		.loader__progress_full-ready {
+			position: absolute;
+			width: 470px;
+			overflow: hidden;
+			background-image: url(./assets/full.png);
+			transition: width 2s 1s;
 		}
 	</style>
 </head>
 
+
+
 <body>
-	<canvas id="canvas" width="1200" height="800"></canvas>
+	<div class="play-screen">
+		<canvas id="canvas" width="1200" height="650"></canvas>
+		<div class="before-play">
+			<div class="txt"></div>
+			<button class="button"></button>
+		</div>
+		<div class="loader">
+			<div class="loader__progress loader__progress_empty"></div>
+			<div class="loader__progress loader__progress_full"></div>
+	</div>
+
+
+
 	<script>
+		window.onload = LoadGame;
+		function LoadGame() {
+			document.querySelector('.loader__progress_full').classList.add('loader__progress_full-ready')
+			var loadTimeOut = setTimeout(function() {
+				document.querySelector('.loader').remove();
+				clearTimeout(loadTimeOut)
+			}, 2500)
+		}
+		document.querySelector('.button').addEventListener('click', StartGame, false)
+		function StartGame() {
+			document.querySelector('.before-play').remove();
+		}
+		var playScreen = document.querySelector('.play-screen');
 		var canvas = document.querySelector('#canvas');
 		ctx = canvas.getContext('2d');
 		window.addEventListener('resize', Resize, false);
@@ -41,7 +140,7 @@
 			} else {
 				scale = h / 800
 			}
-			canvas.style.transform = 'scale(' + scale + ')'
+			playScreen.style.transform = 'scale(' + scale + ')'
 		}
 
 		var
@@ -64,7 +163,7 @@
 		tree3.src = './assets/tree3.png';
 		samolet.src = './assets/samolet.png';
 
-		var lvl = 700,
+		var lvl = 600,
 			// sizes ---------------------------
 			studentW = 249 / 1.75,
 			studentH = 251 / 1.75,
@@ -99,7 +198,7 @@
 			
 			snow1X = 0,
 			snow1X2 = snow1X + snow1W,
-			snow1Y = 800 - snow1H,
+			snow1Y = 700 - snow1H,
 			snow3X = 0,
 			snow3X2 = snow3X + snow3W,
 			snow3X3 = snow3X + snow3W * 2,
@@ -131,6 +230,8 @@
 
 		draw();
 		var
+			jumpCount		= 0,
+			firstJumpEnd	= 0,
 			timeJump		= 0,
 			t				= 0,
 			jumpVelocity	= 90;
@@ -154,8 +255,8 @@
 			// ctx.drawImage(tree3, wood6X, wood6Y, tree3W * 1.1, tree3H * 1.1);
 			//Слой 4
 			ctx.fillStyle = '#dddddd';
-			ctx.fillRect(-1, 700, 1202, 101);
-			ctx.strokeRect(-1, 700, 1202, 101);
+			ctx.fillRect(-1, 600, 1202, 101);
+			ctx.strokeRect(-1, 600, 1202, 101);
 			ctx.drawImage(student, studentX, studentY, studentW, studentH);
 			ctx.drawImage(zachet, zachetX, zachetY, zachetW, zachetH);
 			ctx.drawImage(kursach, kursachX, kursachY, kursachW, kursachH);
@@ -193,18 +294,30 @@
 			snow1X2	= (snow1X2 <= -snow1W? snow1X + snow1W: snow1X2 - 11);
 
 			timeJump = timeJump + t;
-			studentY	= ((556 - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)));
-			if(studentY > 557) {
-				timeJump = 0
+			if(jumpCount === 1) {
+				studentY	= ((456 - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)));
+			} else if(jumpCount === 2) {
+				studentY	= ((firstJumpEnd - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)))
+			}
+			if(studentY > 457) {
+				timeJump = 0;
 				t = 0;
-				studentY = 556
+				studentY = 456;
+				jumpCount = 0;
 			}
 
 			console.log(studentY)
 		}
 
 		function Jump() {
-			t = 0.16;
+			if (jumpCount < 2) {
+				t = 0.16;
+				jumpCount++;
+				if(jumpCount === 2) {
+					timeJump = 0;
+					firstJumpEnd = studentY
+				}
+			}
 		}
 
 	</script>
