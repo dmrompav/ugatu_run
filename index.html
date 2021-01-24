@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" translate="no">
 
 
 
@@ -12,19 +12,8 @@
 
 	<style>
 		body {
-			position: fixed;
 			width: 100vw;
 			height: 100vh;
-			overflow: hidden;
-			background-color: #000000;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-		.wrapper {
-			position: fixed;
-			width: 100vw;
-			height: 90vh;
 			overflow: hidden;
 			background-color: #000000;
 			display: flex;
@@ -127,22 +116,18 @@
 
 
 <body>
-	<div class="wrapper">
-		<div class="play-screen">
-			<canvas id="canvas" width="1200" height="650"></canvas>
-			<div class="count">0</div>
-			<div class="before-play">
-				<div class="txt"></div>
-				<button class="button"></button>
-			</div>
-			<div class="loader">
-				<div class="loader__progress loader__progress_empty"></div>
-				<div class="loader__progress loader__progress_full"></div>
-			</div>
+	<div class="play-screen">
+		<canvas id="canvas" width="1200" height="650"></canvas>
+		<div class="count">0</div>
+		<div class="before-play">
+			<div class="txt"></div>
+			<button class="button"></button>
 		</div>
-		
+		<div class="loader">
+			<div class="loader__progress loader__progress_empty"></div>
+			<div class="loader__progress loader__progress_full"></div>
+		</div>
 	</div>
-
 
 
 	<script src='main.js'></script>
