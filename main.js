@@ -19,7 +19,7 @@ window.onload = LoadGame;
 				clearTimeout(loadTimeOut)
 			}, 2000)
 		}
-		var wrapper = document.querySelector('.wrapper');
+		var playScreen = document.querySelector('.play-screen');
 		var countHtml = document.querySelector('.count')
 		var canvas = document.querySelector('#canvas');
 		ctx = canvas.getContext('2d');
@@ -36,7 +36,7 @@ window.onload = LoadGame;
 			} else {
 				scale = h / 650
 			}
-			wrapper.style.transform = 'scale(' + scale + ')'
+			playScreen.style.transform = 'scale(' + scale + ')'
 		}
 
 		var
