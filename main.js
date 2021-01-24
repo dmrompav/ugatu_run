@@ -266,7 +266,7 @@ window.onload = LoadGame;
 					countHtml.innerHTML = count
 				}
 			}
-			if(count === 3) {
+			if(count === 30) {
 				win = true;
 				permissions[0] = 0;
 				permissions[1] = 0;
@@ -304,8 +304,9 @@ window.onload = LoadGame;
 			var A = setTimeout(function() {
 				drawPermission = false;
 				document.querySelector('.before-play').style.transform = 'scale(1)';
-				document.querySelector('.button').addEventListener('click', RestartGame, false)
-				document.querySelector('.txt').innerHTML = '';
+				document.querySelector('.button').addEventListener('click', RestartGame, false);
+				document.querySelector('.txt').innerHTML = `<video autoplay class="video" width="640" height="352"><source src="./assets/V.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'></video>`;
+				// document.querySelector('.video').play();
 				clearTimeout(A);
 			}, 1500)
 		}
