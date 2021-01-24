@@ -4,18 +4,22 @@ window.onload = LoadGame;
 			var loadTimeOut = setTimeout(function() {
 				document.querySelector('.loader').remove();
 				clearTimeout(loadTimeOut)
-			}, 0)
+			}, 2500)
 		}
 
 		document.querySelector('.button').addEventListener('click', StartGame, false)
 		function StartGame() {
-			document.querySelector('.before-play').remove();
+			document.querySelector('.button').removeEventListener('click', StartGame, false)
+			document.querySelector('.before-play').style.transform = 'scale(0)';
+
+			
+
 			var loadTimeOut = setTimeout(function() {
 				StartEnemies();
 				clearTimeout(loadTimeOut)
 			}, 2000)
 		}
-		var playScreen = document.querySelector('.play-screen');
+		var wrapper = document.querySelector('.wrapper');
 		var countHtml = document.querySelector('.count')
 		var canvas = document.querySelector('#canvas');
 		ctx = canvas.getContext('2d');
@@ -26,13 +30,13 @@ window.onload = LoadGame;
 				w = window.innerWidth,
 				h = window.innerHeight,
 				scale;
-			if ((w / h) < (1200 / 700)) {
+			if ((w / h) < (1200 / 650)) {
 				scale = w / 1200
 
 			} else {
-				scale = h / 700
+				scale = h / 650
 			}
-			playScreen.style.transform = 'scale(' + scale + ')'
+			wrapper.style.transform = 'scale(' + scale + ')'
 		}
 
 		var
@@ -121,9 +125,10 @@ window.onload = LoadGame;
 			samoletY = 30;
 
 		var
+			drawPermission	= true,
 			win				= false,
 			permissions		= [0, 0, 0]
-			allMove			= true,
+			lose			= false,
 			count			= 0,
 			jumpCount		= 0,
 			firstJumpEnd	= 0,
@@ -165,14 +170,16 @@ window.onload = LoadGame;
 			ctx.drawImage(snow1, snow1X, snow1Y, snow1W, snow1H);
 			ctx.drawImage(snow1, snow1X2, snow1Y, snow1W, snow1H);
 
-			if(allMove) {
+			if(!win) {
 				moveAllMoveable();
 			}
 			enemyMove();
 			isWin();
 			isLosing();
 
-			requestAnimationFrame(draw);
+			if (drawPermission) {
+				requestAnimationFrame(draw);
+			}
 		}
 		function moveAllMoveable() {
 			wood1X	= (wood1X <= -300? 1200: wood1X - 3);
@@ -191,45 +198,44 @@ window.onload = LoadGame;
 
 			snow1X	= (snow1X <= -snow1W? snow1X2 + snow1W - 11: snow1X - 11);
 			snow1X2	= (snow1X2 <= -snow1W? snow1X + snow1W: snow1X2 - 11);
-
-			timeJump = timeJump + t;
-			if(jumpCount === 1) {
-				studentY	= ((456 - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)));
-			} else if(jumpCount === 2) {
-				studentY	= ((firstJumpEnd - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)))
-			}
-			if(studentY > 457) {
-				timeJump = 0;
-				t = 0;
-				studentY = 456;
-				jumpCount = 0;
-			}
 		}
 		function enemyMove() {
 			zachetX		-= 13 * permissions[0];
 			kursachX	-= 13 * permissions[1];
 			samoletX	-= 13 * permissions[2];
-			if (!allMove) {
+			if (lose) {
 				studentX -= 13
-			}
-			else {
-				if (zachetX < -200) {
-					zachetX = 1200;
-					count++;
-					countHtml.innerHtml = count
-					permissions[0] = 0
+			} else {
+				timeJump = timeJump + t;
+				if(jumpCount === 1) {
+					studentY	= ((456 - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)));
+				} else if(jumpCount === 2) {
+					studentY	= ((firstJumpEnd - (jumpVelocity * timeJump) + (20 * timeJump * timeJump / 2)))
 				}
-				if (kursachX < -200) {
-					kursachX = 1200;
-					count++;
-					countHtml.innerHTML = count
-					permissions[1] = 0
-				}
-				if (samoletX < -200) {
-					samoletX = 1200;
-					permissions[2] = 0
+				if(studentY > 457) {
+					timeJump = 0;
+					t = 0;
+					studentY = 456;
+					jumpCount = 0;
 				}
 			}
+			if (win) {
+				studentX += 13
+			}
+			
+			if (zachetX < -200) {
+				zachetX = 1200;
+				permissions[0] = 0
+			}
+			if (kursachX < -200) {
+				kursachX = 1200;
+				permissions[1] = 0
+			}
+			if (samoletX < -200) {
+				samoletX = 1200;
+				permissions[2] = 0
+			}
+			
 		}
 		function Jump() {
 			if (jumpCount < 2) {
@@ -241,30 +247,69 @@ window.onload = LoadGame;
 				}
 			}
 		}
+		function StartEnemies() {
+			var enemyInterval = setInterval(function() {
+				permissions[Math.floor(Math.random() * permissions.length)] = 1
+				if (lose || win) {
+					clearInterval(enemyInterval)
+				}
+			}, 500)
+		}
+
+
+
 		function isWin() {
-			if(count === 30) {
-				win = true
+			if((zachetX > 0 && zachetX <= 13) || (kursachX > 0 && kursachX <= 13)){
+				if (!win && !lose) {
+					console.log(win, lose)
+					count++;
+					countHtml.innerHTML = count
+				}
+			}
+			if(count === 3) {
+				win = true;
+				permissions[0] = 0;
+				permissions[1] = 0;
+				permissions[2] = 0;
+				GameWin();
 			}
 		}
 		function isLosing() {
 			if ((studentY > (lvl - kursachH - studentH + 40)) && ((zachetX > (studentX-zachetW + 40) && zachetX < (studentX+studentW - 20)) || (kursachX > (studentX-kursachW + 40) && kursachX < (studentX+studentW - 20)))) {
-				GameOver()
+				if (!win) {
+					lose = true;
+					GameOver();
+				}
 			}
 			if ((studentY < samoletY + samoletH - 50) && ((samoletX > (studentX-samoletW + 30) && samoletX < (studentX+studentW - 90)))) {
-				GameOver()
-			}
-		}
-		function GameOver() {
-			if (!win) {
-				allMove = false
+				if (!win) {
+					lose = true;
+					GameOver();
+				}
 			}
 		}
 
-		function StartEnemies() {
-			var enemyInterval = setInterval(function() {
-				permissions[Math.floor(Math.random() * permissions.length)] = 1
-				if (!allMove) {
-					clearInterval(enemyInterval)
-				}
-			}, 500)
+
+
+		function GameOver() {
+			var A = setTimeout(function() {
+				drawPermission = false;
+				document.querySelector('.before-play').style.transform = 'scale(1)';
+				document.querySelector('.button').addEventListener('click', RestartGame, false)
+				document.querySelector('.txt').innerHTML = '';
+				clearTimeout(A);
+			}, 1500)
+		}
+		function GameWin() {
+			var A = setTimeout(function() {
+				drawPermission = false;
+				document.querySelector('.before-play').style.transform = 'scale(1)';
+				document.querySelector('.button').addEventListener('click', RestartGame, false)
+				document.querySelector('.txt').innerHTML = '';
+				clearTimeout(A);
+			}, 1500)
+		}
+
+		function RestartGame() {
+			window.location.reload();
 		}

@@ -10,13 +10,6 @@
 	<link rel="icon" type="image/png" href="./assets/fav.png"> <!-- Фавикон -->
 
 	<style>
-		html {
-			position: fixed;
-			width: 100vw;
-			height: 100vh;
-			overflow: hidden;
-			background-color: #000000;
-		}
 		body {
 			position: fixed;
 			width: 100vw;
@@ -27,16 +20,26 @@
 			justify-content: center;
 			align-items: center;
 		}
+		.wrapper {
+			position: fixed;
+			width: 100vw;
+			height: 90vh;
+			overflow: hidden;
+			background-color: #000000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 		.play-screen {
 			position: absolute;
 			width: 1200px;
 			height: 650px;
+			border: 30px solif red;
 		}
 		.count {
 			position: absolute;
-			right: 0;
-			top: 0;
-			margin: 20px;
+			right: 20px;
+			top: 20px;
 			font-size: 50px;
 			color: #fff;
 			font-family: Arial, Helvetica, sans-serif
@@ -114,16 +117,18 @@
 
 
 <body>
-	<div class="play-screen">
-		<canvas id="canvas" width="1200" height="650"></canvas>
-		<div class="count">0</div>
-		<div class="before-play">
-			<div class="txt"></div>
-			<button class="button"></button>
+	<div class="wrapper">
+		<div class="play-screen">
+			<canvas id="canvas" width="1200" height="650"></canvas>
+			<div class="count">0</div>
+			<div class="before-play">
+				<div class="txt"></div>
+				<button class="button"></button>
+			</div>
+			<div class="loader">
+				<div class="loader__progress loader__progress_empty"></div>
+				<div class="loader__progress loader__progress_full"></div>
 		</div>
-		<div class="loader">
-			<div class="loader__progress loader__progress_empty"></div>
-			<div class="loader__progress loader__progress_full"></div>
 	</div>
 
 
